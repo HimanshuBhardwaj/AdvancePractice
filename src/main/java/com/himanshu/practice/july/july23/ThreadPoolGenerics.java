@@ -26,8 +26,6 @@ public class ThreadPoolGenerics {
             }
         };
 
-
-
         Callable callable3 = new Callable() {
             @Override
             public Object call() throws Exception {
@@ -43,7 +41,6 @@ public class ThreadPoolGenerics {
                 return null;
             }
         };
-
 
         threadPool.submitTask(callable1);
         threadPool.submitTask(callable2);
@@ -124,9 +121,8 @@ class ThreadPool {
         }
 
     }
-
-
 }
+
 
 @Setter
 class ThreadImpl extends Thread {
