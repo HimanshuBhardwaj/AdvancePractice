@@ -30,6 +30,4 @@ class TempSet<T extends Comparable<T>> {
     public T ceil(T key) {
         return set.ceiling(key);
     }
-
-
 }
