@@ -2,12 +2,14 @@ package com.himanshu.practice.aug.aug13;
 
 import lombok.AllArgsConstructor;
 import lombok.ToString;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-
+import java.util.Comparator;
+import java.util.TreeSet;
 
 
 public class MST {
@@ -29,10 +31,17 @@ public class MST {
 
         ArrayList<Edge> mst = graph.kurashkalMST();
 
-        System.out.println("Printing MST" + "\t" + mst.size());
+        System.out.println("Printing MST Kurashkal" + "\t" + mst.size());
         for (Edge e : mst) {
             System.out.println(e);
         }
+
+//        mst = graph.prismMST();
+//        System.out.println();
+//        System.out.println("Printing MST Prism" + "\t" + mst.size());
+//        for (Edge e : mst) {
+//            System.out.println(e);
+//        }
     }
 }
 
@@ -41,6 +50,7 @@ class Graph {
     ArrayList<Edge> edges;
     int[] parent;
     int height[];
+    ArrayList<Edge> adjList[];
 
     public Graph(int n, int m) {
         edges = new ArrayList<>();
@@ -51,10 +61,19 @@ class Graph {
             parent[i] = i;
             height[i] = 1;
         }
+
+        adjList = new ArrayList[n];
+
+        for (int i = 0; i < n; i++) {
+            adjList[i] = new ArrayList<>();
+        }
     }
 
     void insert(int s, int d, int w) {
-        edges.add(new Edge(s, d, w));
+        Edge e = new Edge(s, d, w);
+        edges.add(e);
+        adjList[s].add(e);
+        adjList[d].add(e);
     }
 
 
@@ -75,6 +94,52 @@ class Graph {
                 mergeCluster(mst, e);
             }
         }
+        return mst;
+    }
+
+
+    ArrayList<Edge> prismMST() {
+        ArrayList<Edge> mst = new ArrayList<>();
+        TreeSet<Edge> edgeSet = new TreeSet<>();
+        TreeSet<Integer> coveredNodes = new TreeSet<>();
+
+
+        for (Edge e : adjList[0]) {
+            edgeSet.add(e);
+        }
+
+
+        while (!edgeSet.isEmpty()) {
+            Edge e = edgeSet.first();
+            edgeSet.remove(e);
+
+            if (coveredNodes.contains(e.destinatopn) && coveredNodes.contains(e.source)) {
+                continue;
+            } else {
+                coveredNodes.add(e.source);
+                coveredNodes.add(e.destinatopn);
+                mst.add(e);
+                System.out.println(mst.size());
+
+
+                for (Edge ee : adjList[e.destinatopn]) {
+                    if (!coveredNodes.contains(ee.source)) {
+                        edgeSet.add(ee);
+                    }
+
+                }
+
+                for (Edge ee : adjList[e.source]) {
+                    if (!coveredNodes.contains(ee.destinatopn)) {
+                        edgeSet.add(ee);
+                    }
+
+                }
+
+
+            }
+        }
+
         return mst;
     }
 
@@ -128,7 +193,19 @@ class Edge implements Comparable<Edge> {
 
     @Override
     public int compareTo(Edge o) {
-        return this.weight - o.weight;
+        if (this.weight != o.weight) {
+            return this.weight - o.weight;
+        } else {
+            if (this.source == o.source && this.destinatopn == o.destinatopn) {
+                return 0;
+            }
+
+            if (this.destinatopn == o.source && this.source == o.destinatopn) {
+                return 0;
+            }
+
+            return 1;
+        }
     }
 }
 /*
