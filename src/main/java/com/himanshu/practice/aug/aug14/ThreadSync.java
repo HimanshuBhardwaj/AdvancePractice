@@ -5,8 +5,12 @@ import sun.awt.Mutex;
 
 import java.io.PrintWriter;
 import java.util.concurrent.atomic.AtomicInteger;
-
-public class ThreadSyncUsingDoubleCheckedLocking {
+/*
+Conclusion:
+    Wait notify is faster than mutex
+    speed factor: 18000/150 = 120 times
+* */
+public class ThreadSync {
     public static void main(String[] args) throws InterruptedException {
         int n = 200;
         AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -15,7 +19,7 @@ public class ThreadSyncUsingDoubleCheckedLocking {
         PrintWriter printWriter = new PrintWriter(System.out);
 
         for (int i = 0; i < n; i++) {
-            threads[i] = new Thread(new ThreadPOC(i, atomicInteger, mutex, n, printWriter));
+            threads[i] = new Thread(new ThreadPOCDCL(i, atomicInteger, mutex, n, printWriter));
         }
 
         for (int i = 0; i < n; i++) {
@@ -34,14 +38,14 @@ public class ThreadSyncUsingDoubleCheckedLocking {
 }
 
 
-class ThreadPOC implements Runnable {
+class ThreadPOCDCL implements Runnable {
     private int threadId;
     private AtomicInteger value;
     private Mutex mutex;
     private int numberThread;
     private PrintWriter printWriter;
 
-    public ThreadPOC(int threadId, AtomicInteger atomicInteger, Mutex mutex, int n, PrintWriter printWriter) {
+    public ThreadPOCDCL(int threadId, AtomicInteger atomicInteger, Mutex mutex, int n, PrintWriter printWriter) {
         this.threadId = threadId;
         this.value = atomicInteger;
         this.mutex = mutex;
@@ -71,6 +75,41 @@ class ThreadPOC implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+}
+
+
+class ThreadPOCWaitNotify implements Runnable {
+    private int threadId;
+    private AtomicInteger value;
+    private Mutex mutex;
+    private int numberThread;
+    private PrintWriter printWriter;
+
+    public ThreadPOCWaitNotify(int threadId, AtomicInteger atomicInteger, Mutex mutex, int n, PrintWriter printWriter) {
+        this.threadId = threadId;
+        this.value = atomicInteger;
+        this.mutex = mutex;
+        this.numberThread = n;
+        this.printWriter = printWriter;
+    }
+
+    @Override
+    public void run() {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                synchronized (value) {
+                    if (value.intValue() % numberThread == threadId) {
+                        System.out.println(Thread.currentThread().getId() + "\t" + threadId + "\t" + value.getAndIncrement());
+                        value.notifyAll();
+                    } else {
+                        value.wait();
+                    }
+                }
+            } catch (InterruptedException e) {
+//                e.printStackTrace();
+            }
         }
     }
 }
