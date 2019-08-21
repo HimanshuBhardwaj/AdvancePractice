@@ -1,4 +1,4 @@
-package com.himanshu.practice.aug21;
+package com.himanshu.practice.aug.aug21;
 
 import java.io.BufferedReader;
 import java.io.IOException;
