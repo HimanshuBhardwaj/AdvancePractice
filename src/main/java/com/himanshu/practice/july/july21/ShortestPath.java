@@ -39,12 +39,17 @@ public class ShortestPath {
             graph.insertForbiddenTriples(a, b, c);
         }
 
-        graph.BFS(0, graph.shortesPAthFromSource);
-        graph.BFS(n - 1, graph.shortestPathFromDestination);
-        System.out.println();
+        //graph.BFS(0, graph.shortesPAthFromSource);
+        // graph.BFS(n - 1, graph.shortestPathFromDestination);
+        //System.out.println();
         graph.printGraph();
+        int[] sd = new int[n];
 
-        System.out.println(graph.shortestDistance());
+
+        System.out.println(graph.BFS(0, sd));
+        for (int i = 0; i < n; i++) {
+            System.out.println(i + "\t" + sd[i]);
+        }
 
 
     }
@@ -57,6 +62,7 @@ class SGraph {
     int shortestPathFromDestination[];
     int n;
     HashSet<String> notAllowedTriples;
+    int parent[];
 
 
     public SGraph(int n) {
@@ -69,6 +75,7 @@ class SGraph {
         shortesPAthFromSource = new int[n];
         shortestPathFromDestination = new int[n];
         notAllowedTriples = new HashSet<>();
+        parent = new int[n];
     }
 
     public void insert(int x, int y) {
@@ -82,7 +89,7 @@ class SGraph {
         a--;
         b--;
         c--;
-        //notAllowedTriples.add(serialiseTriple(a, b, c));
+        notAllowedTriples.add(serialiseTriple(a, b, c));
     }
 
     private String serialiseTriple(int a, int b, int c) {
@@ -90,10 +97,16 @@ class SGraph {
     }
 
 
-    public void BFS(int source, int[] shortDistanceArray) {
+    public int BFS(int source, int[] shortDistanceArray) {
         for (int i = 0; i < shortDistanceArray.length; i++) {
             shortDistanceArray[i] = Integer.MAX_VALUE;
         }
+
+        for (int i = 0; i < n; i++) {
+            parent[i] = -1;
+        }
+
+        parent[source] = source;
         shortDistanceArray[source] = 0;
         Queue<Integer> queue = new LinkedList<>();
         boolean[] visited = new boolean[n];
@@ -111,11 +124,14 @@ class SGraph {
                         visited[neighbour] = true;
                         queue.add(neighbour);
                         shortDistanceArray[neighbour] = level;
+                        parent[neighbour] = x;
                     }
                 }
             }
             level++;
         }
+
+        return (shortDistanceArray[n - 1] == Integer.MAX_VALUE) ? -1 : shortDistanceArray[n - 1];
     }
 
 
@@ -127,11 +143,11 @@ class SGraph {
             for (int j = 0; j < neighbour.size(); j++) {
                 for (int k = 0; k < neighbour.size(); k++) {
                     int middle = i;
-                    int left = adjList[i].get(j);
-                    int right = adjList[i].get(k);
+                    int left = neighbour.get(j);
+                    int right = neighbour.get(k);
                     if (!notAllowedTriples.contains(serialiseTriple(j, i, k))) {
-                        if ((shortesPAthFromSource[j] != Integer.MAX_VALUE) && (shortestPathFromDestination[k] != Integer.MAX_VALUE)) {
-                            shortestDistance = Math.min((2 + shortesPAthFromSource[j] + shortestPathFromDestination[k]), shortestDistance);
+                        if ((shortesPAthFromSource[left] != Integer.MAX_VALUE) && (shortestPathFromDestination[right] != Integer.MAX_VALUE)) {
+                            shortestDistance = Math.min((2 + shortesPAthFromSource[left] + shortestPathFromDestination[right]), shortestDistance);
                         }
                     }
                 }
@@ -150,18 +166,6 @@ class SGraph {
             }
             System.out.println();
         }
-        System.out.print("shortesPAthFromSource:\t");
-        for (int x : shortesPAthFromSource) {
-            System.out.print(x + ",");
-        }
-        System.out.println();
-
-        System.out.print("shortestPathFromDestination:\t");
-        for (int x : shortestPathFromDestination) {
-            System.out.print(x + ",");
-        }
-        System.out.println();
-
     }
 
 
