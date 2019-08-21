@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 
 public class NearestNumberGreaterThan {
     public static void main(String[] args) throws IOException {
@@ -15,11 +14,14 @@ public class NearestNumberGreaterThan {
         for (int i = 0; i < arr.length; i++) {
             arr[i] = Integer.parseInt(str[i]);
         }
-        NearestNumberGreaterThanI nearestNumberGreaterThanI = new NearestNumberGreaterThanSqrtDecomposition(arr);
+        NearestNumberGreaterThanI nearestNumberGreaterThanSqrtDecomposition = new NearestNumberGreaterThanSqrtDecomposition(arr);
+        NearestNumberGreaterThanI nearestNumberGreaterThanSegment = new NearestNumberGreaterThanPersistentSegmentTree(arr);
+
 
         for (int i = 0; i < arr.length; i++) {
-            int result = nearestNumberGreaterThanI.NearestNumberGreaterThanI(i);
-            System.out.println(arr[i] + "\t\t" + result);
+            int result = nearestNumberGreaterThanSqrtDecomposition.nearestNumberGreaterThanI(i);
+            int resultS = nearestNumberGreaterThanSqrtDecomposition.nearestNumberGreaterThanI(i);
+            System.out.println(arr[i] + "\t\t" + result+"\t\t"+resultS);
         }
     }
 }
@@ -53,7 +55,7 @@ class NearestNumberGreaterThanSqrtDecomposition implements NearestNumberGreaterT
     }
 
 
-    public int NearestNumberGreaterThanI(int index) {
+    public int nearestNumberGreaterThanI(int index) {
         if (index >= arr.length || index < 0) {
             return -1;
         }
