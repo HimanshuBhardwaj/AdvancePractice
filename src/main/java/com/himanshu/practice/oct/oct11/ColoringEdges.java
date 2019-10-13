@@ -1,5 +1,7 @@
 package com.himanshu.practice.oct.oct11;
 
+
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 /**
  * Created by himanshubhardwaj on 11/10/19.
  * ALGO: Cycle in Directed Graph
+ * Submission: https://codeforces.com/contest/1217/submission/62350868
+ * Statement: https://codeforces.com/contest/1217/problem/D
  */
 public class ColoringEdges {
     public static void main(String[] args) throws IOException {
