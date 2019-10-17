@@ -29,20 +29,22 @@ public class A {
             tree.insert(s, d);
         }
 
+        tree.computeScore();
+
         //tree.print();
         //System.out.println();
         //System.out.println();
-        long cost = tree.computeScore();
-        PrintWriter pw = new PrintWriter(System.out);
-        pw.append(cost + "\n");
-        if (cost != -1) {
-            int[] costs = tree.computePath(cost);
-            for (int x : costs) {
-                pw.append(x + " ");
-            }
-        }
-        pw.flush();
-        pw.close();
+//        long cost = tree.computeScore();
+//        PrintWriter pw = new PrintWriter(System.out);
+//        pw.append(cost + "\n");
+//        if (cost != -1) {
+//            int[] costs = tree.computePath(cost);
+//            for (int x : costs) {
+//                pw.append(x + " ");
+//            }
+//        }
+//        pw.flush();
+//        pw.close();
 
 
     }
@@ -113,26 +115,106 @@ class Tree {
         }
     }
 
+    int getNext(int index, int first) {
+        int next = -1;
+        if (adjList[index].size() == 1) {
+            if (index == first) {
+                next = adjList[index].get(0);
 
-    long computeScore() {
+            } else {
+                next = -1;
+            }
+        } else {
+            return (adjList[index].get(0) == index) ? adjList[index].get(1) : adjList[index].get(0);
+        }
+        return -1;
+    }
+
+    int getPrevious(int index, int first) {
+        if (index == first) {
+            return -1;
+        } else {
+            return previous[index];
+        }
+    }
+
+
+    void computeScore() {
         for (int i = 0; i < numNodes; i++) {
             if (adjList[i].size() > 2) {
-                return -1;
+                System.out.println(-1);
+                return;
+            }
+        }
+        computeMapping();
+
+        if (numNodes == 1) {
+            System.out.println();
+            Math.min(Math.min(cost[0][0], cost[0][1]), cost[0][2]);
+            if (cost[0][0] <= Math.min(cost[0][1], cost[0][2])) {
+                System.out.println(1);
+            } else if (cost[0][1] <= Math.min(cost[0][0], cost[0][2])) {
+                System.out.println(2);
+            } else {
+                System.out.println(3);
+            }
+            return;
+        }
+
+        int first = start;
+        int second = getNext(start, start);
+        int[] bestFilledColour = null;
+        long cost = Long.MAX_VALUE;
+
+        int filledColours[] = new int[numNodes];
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (i != j) {
+                    filledColours[first] = i;
+                    filledColours[second] = j;
+                    fillRemaining(filledColours, first, second);
+                    for (int k = 0; k < filledColours.length; k++) {
+                        System.out.print(filledColours[k] + ",");
+                    }
+                    System.out.println();
+                    long tempCost = computeCost(filledColours);
+                    if (tempCost < cost) {
+                        cost = tempCost;
+                        bestFilledColour = filledColours.clone();
+                    }
+                }
             }
         }
 
-        computeMapping();
-        dp[mapping[0]][0] = cost[mapping[0]][0];
-        dp[mapping[0]][1] = cost[mapping[0]][1];
-        dp[mapping[0]][2] = cost[mapping[0]][2];
-
-        for (int i = 1; i < numNodes; i++) {
-            dp[mapping[i]][0] = Math.min(dp[previous[mapping[i]]][1], dp[previous[mapping[i]]][2]) + cost[mapping[i]][0];
-            dp[mapping[i]][1] = Math.min(dp[previous[mapping[i]]][0], dp[previous[mapping[i]]][2]) + cost[mapping[i]][1];
-            dp[mapping[i]][2] = Math.min(dp[previous[mapping[i]]][0], dp[previous[mapping[i]]][1]) + cost[mapping[i]][2];
+        StringBuilder sb = new StringBuilder();
+        sb.append(cost + "\n");
+        for (int x : bestFilledColour) {
+            sb.append(x + " ");
         }
+        System.out.println(sb.toString());
+    }
 
-        return Math.min(Math.min(dp[mapping[numNodes - 1]][0], dp[mapping[numNodes - 1]][1]), dp[mapping[numNodes - 1]][2]);
+    private long computeCost(int[] filledColours) {
+        int tCost = 0;
+
+        for (int i = 0; i < filledColours.length; i++) {
+            tCost += cost[i][filledColours[i]];
+        }
+        return tCost;
+    }
+
+    private void fillRemaining(int[] filledColours, int first, int second) {
+        int n = 2;
+        int f = first;
+
+        while (n < numNodes) {
+            int next = getNext(second, f);
+            filledColours[next] = 3 - filledColours[first] - filledColours[second];
+            first = second;
+            second = next;
+            n++;
+        }
     }
 
 
