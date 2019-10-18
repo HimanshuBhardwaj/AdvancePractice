@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 /**
  * Created by himanshubhardwaj on 13/10/19.
+ * Statement: https://codeforces.com/contest/1244/problem/D
+ * Algo: DFS, MAths
+ * Submission: https://codeforces.com/contest/1244/problem/D
  */
 public class D {
     public static void main(String[] args) throws IOException {
@@ -26,9 +29,9 @@ public class D {
             tree.insert(Integer.parseInt(str[0]), Integer.parseInt(str[1]));
         }
 
-        tree.print();
-        System.out.println();
-        System.out.println(tree.costHelper());
+        //tree.print();
+        //System.out.println();
+        System.out.print(tree.cost());
     }
 }
 
@@ -41,6 +44,8 @@ class Tree {
     long[] cost2;
     long[] cost3;
     long dp[][];
+    long minCost = Long.MAX_VALUE;
+    int[] minCostColours;
 
     public Tree(int n) {
         parent = new int[n];
@@ -86,64 +91,103 @@ class Tree {
         }
     }
 
+    public String cost() {
 
-    long costHelper() {
-        for (int i = 0; i < numNodes; i++) {
-            if (adjList[i].size() >= 3) {
-                return -1;
-            }
-        }
-        return cost(0, -1);
-    }
-
-
-    private long cost(int node, int parent) {
-        for (int child : adjList[node]) {
-            if (child != parent) {
-                cost(child, node);
-            }
-        }
-
-        if (parent != -1) {
-            //leaf
-            if (adjList[node].size() == 1) {
-                dp[node][0] = cost1[node];
-                dp[node][1] = cost2[node];
-                dp[node][2] = cost3[node];
-                return Math.min(Math.min(dp[node][0], dp[node][1]), dp[node][2]);
+        for (ArrayList<Integer> x : adjList) {
+            if (x.size() > 2) {
+                minCost = -1;
+                break;
             }
         }
 
 
-        long sum0 = cost1[node];
-        long sum1 = cost2[node];
-        long sum2 = cost3[node];
-
-        for (int child : adjList[node]) {
-            if (child != parent) {
-                if (adjList[child].size() > 1) {
-                    for (int grandChild : adjList[child]) {
-                        if (grandChild != node) {
-                            sum0 += Math.min(dp[child][1] + dp[grandChild][2], dp[child][2] + dp[grandChild][1]);
-                            sum1 += Math.min(dp[child][0] + dp[grandChild][2], dp[child][2] + dp[grandChild][0]);
-                            sum2 += Math.min(dp[child][0] + dp[grandChild][1], dp[child][1] + dp[grandChild][0]);
-                        }
-                    }
-                } else {//leaf child
-                    sum0 += Math.min(dp[child][1], dp[child][2]);
-                    sum1 += Math.min(dp[child][0], dp[child][2]);
-                    sum2 += Math.min(dp[child][0], dp[child][1]);
+        if (minCost != -1) {
+            int[] costColours = new int[numNodes];
+            for (int i = 0; i < adjList.length; i++) {
+                if (adjList[i].size() == 1) {
+                   // System.out.println("Root: " + i);
+                    costHelper(i, -1, null, null, costColours);
+                    break;
                 }
             }
         }
 
-        dp[node][0] = sum0;
-        dp[node][1] = sum1;
-        dp[node][2] = sum2;
 
-
-        return Math.min(Math.min(dp[node][0], dp[node][1]), dp[node][2]);
+        StringBuilder sb = new StringBuilder();
+        sb.append(minCost + "\n");
+        if (minCost != -1) {
+            for (int x : minCostColours) {
+                sb.append((x + 1) + " ");
+            }
+        }
+        return sb.toString();
     }
+
+    private void costHelper(int node, int parent, Integer parentColour, Integer grandParentColour, int[] costColours) {
+        if (parentColour == null) {
+            for (int i = 0; i < 3; i++) {
+                costColours[node] = i;
+                for (int neighbour : adjList[node]) {
+                    if (neighbour != parent) {
+                        costHelper(neighbour, node, i, grandParentColour, costColours);
+                    }
+                }
+            }
+            return;
+        }
+
+        if (grandParentColour == null) {
+            for (int i = 2; i >= 0; i--) {
+                if (i != parentColour) {
+                    costColours[node] = i;
+
+                    for (int neighbour : adjList[node]) {
+                        if (neighbour != parent) {
+                            costHelper(neighbour, node, i, parentColour, costColours);
+                            long tempCost = computeCost(costColours);
+                            if (tempCost < this.minCost) {
+                                minCost = tempCost;
+                                minCostColours = costColours.clone();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return;
+        }
+
+        costColours[node] = 3 - parentColour - grandParentColour;
+        for (int neighbour : adjList[node]) {
+            if (neighbour != parent) {
+                costHelper(neighbour, node, costColours[node], parentColour, costColours);
+            }
+        }
+    }
+
+    private long computeCost(int[] costColours) {
+        long temoCost = 0l;
+
+        for (int i = 0; i < costColours.length; i++) {
+            if (costColours[i] == 0) {
+                temoCost += cost1[i];
+            } else if (costColours[i] == 1) {
+                temoCost += cost2[i];
+            } else if (costColours[i] == 2) {
+                temoCost += cost3[i];
+            } else {
+                System.out.println("Something is wrong");
+            }
+        }
+//
+//        for (int x : costColours) {
+//            System.out.print(x + " ");
+//        }
+//        System.out.println(":\t\t" + temoCost);
+
+        return temoCost;
+    }
+
 
     void print() {
         for (int i = 0; i < numNodes; i++) {
