@@ -4,15 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 
 /**
  * Created by himanshubhardwaj on 31/10/19.
+ * complexity: O(nlogn + m sqrt(n)logn)
  */
+
 public class LittleElephantAndArray {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -31,7 +30,11 @@ public class LittleElephantAndArray {
             }
         };
 
-        TreeMap<Integer, TreeSet<Number>> treeMap = new TreeMap<>();
+
+        TreeSet<Number>[] setA = new TreeSet[100001];
+        for (int i = 0; i < setA.length; i++) {
+            setA[i] = new TreeSet<>(comparator);
+        }
 
         str = br.readLine().split(" ");
         for (int i = 0; i < n; i++) {
@@ -39,37 +42,34 @@ public class LittleElephantAndArray {
             if (arr[i] > 100000) {
                 continue;
             }
-
-            if (!treeMap.containsKey(arr[i])) {
-                treeMap.put(arr[i], new TreeSet<Number>(comparator));
-            }
-            treeMap.get(arr[i]).add(new Number(i, -1));
+            setA[arr[i]].add(new Number(i, -1));
         }
 
 
-        TreeSet<Integer> tempSet = new TreeSet<>(treeMap.keySet());
-        for (int x : tempSet) {
-            TreeSet<Number> set = treeMap.get(x);
-            if (set.size() < x) {
-                treeMap.remove(x);
-                continue;
-            }
-            int pos = 0;
-            for (Number num : set) {
-                num.index = pos++;
+        HashSet<Integer> nonEmptyNum = new HashSet<>();
+        for (int i = 0; i < setA.length; i++) {
+            if (setA[i].size() < i) {
+                setA[i] = null;
+            } else {
+                nonEmptyNum.add(i);
+                int pos = 0;
+                for (Number num : setA[i]) {
+                    num.index = pos++;
+                }
             }
         }
+
 
 //        for (int x : treeMap.keySet()) {
 //            System.out.println(x + "\t" + treeMap.get(x));
 //        }
 //        System.out.println();
 
-        HashMap<Integer, TreeSet<Number>> newMap = new HashMap<>(treeMap);
-
 
         Number tempNumberl = new Number(0, 0);
         Number tempNumberr = new Number(0, 0);
+
+
 
         for (int i = 0; i < m; i++) {
             str = br.readLine().split(" ");
@@ -80,11 +80,11 @@ public class LittleElephantAndArray {
 
             int count = 0;
 
-            for (int x : treeMap.keySet()) {
-                TreeSet<Number> set = treeMap.get(x);
+            for (int numbers : nonEmptyNum) {
+                TreeSet<Number> set = setA[numbers];
                 Number rf = set.floor(tempNumberr);
                 Number lf = set.floor(tempNumberl);
-
+                int x = numbers;
 
                 if (lf != null && rf != null) {
                     if ((rf.index - lf.index) == x) {
