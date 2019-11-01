@@ -70,7 +70,6 @@ public class LittleElephantAndArray {
         Number tempNumberr = new Number(0, 0);
 
 
-
         for (int i = 0; i < m; i++) {
             str = br.readLine().split(" ");
             int l = Integer.parseInt(str[0]) - 2;
@@ -123,26 +122,5 @@ class Number {
     public String toString() {
         return "Number(position=" + this.position + ", index=" + this.index + ")";
     }
-
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof Number)) return false;
-        final Number other = (Number) o;
-        if (!other.canEqual((Object) this)) return false;
-        if (this.position != other.position) return false;
-        if (this.index != other.index) return false;
-        return true;
-    }
-
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        result = result * PRIME + this.position;
-        result = result * PRIME + this.index;
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof Number;
-    }
 }
+
