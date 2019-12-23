@@ -10,35 +10,24 @@ import java.util.HashSet;
 
 public class TheLeastRoundWay {
     public static void main(String[] args) throws IOException {
-        String s = "RDRDRRRRRRDDDDDRRDDRDDDRDDDDRDRRRRRRDDRRDDRRRRDDRDDRDDRRDD";
-        //System.out.println(s.length());
-//        s = "DDDDDDDRRDDDDDDRDDDRDDDDDRDDDRDDDRRRRRRRRRRRRRRRRRRRRRDRRD";
-
-
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(bufferedReader.readLine());
         Index[][] indices = new Index[n][n];
         int[][] a = new int[n][n];
 
-        boolean containsZ = false;
+        HashSet<State> zeroStates = new HashSet<>();
+
 
         for (int i = 0; i < n; i++) {
             String[] str = bufferedReader.readLine().split(" ");
             for (int j = 0; j < n; j++) {
                 a[i][j] = Integer.parseInt(str[j]);
                 if (a[i][j] == 0) {
-                    containsZ = true;
+                    zeroStates.add(new State(i, j));
+                    a[i][j] = 10;
                 }
             }
         }
-
-
-//        if (n == 30) {
-//            printCost(a, s);
-//            if (s != null) {
-//                return;
-//            }
-//        }
 
         indices[0][0] = new Index(numT(a[0][0]), numF(a[0][0]));
 
@@ -57,38 +46,54 @@ public class TheLeastRoundWay {
         int tj = -1;
 
 
-        HashSet<State> zeroStates = new HashSet<>();
+        State state1 = new State(0, 0);
+        State state2 = new State(0, 0);
+        State state = new State(0, 0);
+
         for (int i = 1; i < a.length; i++) {
             for (int j = 1; j < a.length; j++) {
-                if (a[i][j] == 0) {
-                    a[i][j] = 10;
-                    ti = i;
-                    tj = j;
-                    zeroStates.add(new State(i, j));
-                }
-                if (Math.min(indices[i - 1][j].numT + numT(a[i][j]), indices[i - 1][j].numF + numF(a[i][j])) <
-                        Math.min(indices[i][j - 1].numT + numT(a[i][j]), indices[i][j - 1].numF + numF(a[i][j]))) {
-                    int two = indices[i - 1][j].numT + numT(a[i][j]);
-                    int five = indices[i - 1][j].numF + numF(a[i][j]);
-                    indices[i][j] = new Index(two, five);
-                } else if (Math.min(indices[i - 1][j].numT + numT(a[i][j]), indices[i - 1][j].numF + numF(a[i][j])) >
-                        Math.min(indices[i][j - 1].numT + numT(a[i][j]), indices[i][j - 1].numF + numF(a[i][j]))) {
-                    int two = indices[i][j - 1].numT + numT(a[i][j]);
-                    int five = indices[i][j - 1].numF + numF(a[i][j]);
-                    indices[i][j] = new Index(two, five);
+                state1.i = i - 1;
+                state1.j = j;
+
+                state2.i = i;
+                state2.j = j - 1;
+
+                state.i = i;
+                state.j = j;
+
+
+                if ((zeroStates.contains(state1) && zeroStates.contains(state2)) || (zeroStates.contains(state))) {
+                    indices[i][j] = new Index(10000000, 10000000);
+                } else if (zeroStates.contains(state1)) {
+                    indices[i][j] = new Index(indices[i][j - 1].numT + numT(a[i][j]), indices[i][j - 1].numF + numF(a[i][j]));
+                } else if (zeroStates.contains(state2)) {
+                    indices[i][j] = new Index(indices[i - 1][j].numT + numT(a[i][j]), indices[i - 1][j].numF + numF(a[i][j]));
                 } else {
-                    int two = Math.min(indices[i - 1][j].numT, indices[i][j - 1].numT) + numT(a[i][j]);
-                    int five = Math.min(indices[i - 1][j].numF, indices[i][j - 1].numF) + numF(a[i][j]);
-                    indices[i][j] = new Index(two, five);
+                    if (Math.min(indices[i - 1][j].numT + numT(a[i][j]), indices[i - 1][j].numF + numF(a[i][j])) <
+                            Math.min(indices[i][j - 1].numT + numT(a[i][j]), indices[i][j - 1].numF + numF(a[i][j]))) {
+                        int two = indices[i - 1][j].numT + numT(a[i][j]);
+                        int five = indices[i - 1][j].numF + numF(a[i][j]);
+                        indices[i][j] = new Index(two, five);
+                    } else if (Math.min(indices[i - 1][j].numT + numT(a[i][j]), indices[i - 1][j].numF + numF(a[i][j])) >
+                            Math.min(indices[i][j - 1].numT + numT(a[i][j]), indices[i][j - 1].numF + numF(a[i][j]))) {
+                        int two = indices[i][j - 1].numT + numT(a[i][j]);
+                        int five = indices[i][j - 1].numF + numF(a[i][j]);
+                        indices[i][j] = new Index(two, five);
+                    } else {
+                        int two = Math.min(indices[i - 1][j].numT, indices[i][j - 1].numT) + numT(a[i][j]);
+                        int five = Math.min(indices[i - 1][j].numF, indices[i][j - 1].numF) + numF(a[i][j]);
+                        indices[i][j] = new Index(two, five);
+                    }
                 }
             }
         }
 
 
-        if (containsZ) {
+        if (zeroStates.size() > 0) {
             if (Math.min(indices[n - 1][n - 1].numF, indices[n - 1][n - 1].numT) == 0) {
                 printMinPath(indices, n, a, zeroStates);
             } else {
+
                 System.out.print(printZeroContainingPath(a, ti, tj));
             }
             return;
@@ -117,20 +122,9 @@ public class TheLeastRoundWay {
 
     private static void printMinPath(Index[][] indices, int n, int[][] a, HashSet<State> zeroStates) {
         State tState = new State(0, 0);
-        //System.out.println(Math.min(indices[n - 1][n - 1].numT, indices[n - 1][n - 1].numF) + "...");
-        //System.out.println();
-        //System.out.println();
 
-
-//        for (int i = 0; i < n; i++) {
-//            for (int j = 0; j < n; j++) {
-//                System.out.print("(" + indices[i][j].numT + "," + indices[i][j].numF + ")\t");
-//            }
-//            System.out.println();
-//        }
 
         StringBuilder sb = new StringBuilder();
-//        sb.append(Math.min(indices[n - 1][n - 1].numF, indices[n - 1][n - 1].numT) + "\n");
 
         int i = n - 1;
         int j = n - 1;
@@ -138,13 +132,15 @@ public class TheLeastRoundWay {
         while (i > 0 && j > 0) {
             tState.i = i - 1;
             tState.j = j;
-            if (((!zeroStates.contains(tState)) &&
-                    (indices[i][j].numT == (indices[i - 1][j].numT + numT(a[i][j]))) && (indices[i][j].numF == (indices[i - 1][j].numF + numF(a[i][j]))))) {
+            if ((indices[i][j].numT == (indices[i - 1][j].numT + numT(a[i][j]))) && (indices[i][j].numF == (indices[i - 1][j].numF + numF(a[i][j])))) {
                 sb.append("D");
                 i = i - 1;
-            } else {
+            } else if ((indices[i][j].numT == (indices[i][j - 1].numT + numT(a[i][j]))) && (indices[i][j].numF == (indices[i][j - 1].numF + numF(a[i][j])))) {
                 sb.append("R");
                 j = j - 1;
+            } else {
+                System.out.println("Something is broken\t" + a[i][j] + "\t" + indices[i][j] + "\t" + indices[i - 1][j] + "\t" + indices[i][j - 1]);
+                return;
             }
         }
 
@@ -164,7 +160,7 @@ public class TheLeastRoundWay {
 
     static int numT(int num) {
         if (num == 0) {
-            return 10;
+            return 10000;
         }
         int count = 0;
 
@@ -178,7 +174,7 @@ public class TheLeastRoundWay {
 
     static int numF(int num) {
         if (num == 0) {
-            return 10;
+            return 100000;
         }
 
         int count = 0;
@@ -228,6 +224,10 @@ class Index {
     public Index(int numT, int numF) {
         this.numT = numT;
         this.numF = numF;
+    }
+
+    public String toString() {
+        return "Index(numT=" + this.numT + ", numF=" + this.numF + ")";
     }
 }
 
