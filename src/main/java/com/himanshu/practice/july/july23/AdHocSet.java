@@ -8,7 +8,7 @@ public class AdHocSet {
         tempSet.insert("Himanshu");
         tempSet.insert("Bhardwaj");
         tempSet.insert("taport");
-        System.out.println(tempSet.ceil("B"));
+        System.out.println(tempSet.ceil("BinaryHeapLeaf"));
     }
 }
 
