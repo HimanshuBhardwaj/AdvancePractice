@@ -47,7 +47,7 @@ public class LayeredGlass {
         initialCount = Math.min(initialCount, minDefectsB(A, B));
         flipA(A);
 
-        //flip B
+        //flip BinaryHeapLeaf
         flipB(A);
         initialCount = Math.min(initialCount, minDefectsB(A, B));
         rotate(A);
@@ -178,7 +178,7 @@ public class LayeredGlass {
         }
 //        if (count==0) {
 //            print(A);
-//            print(B);
+//            print(BinaryHeapLeaf);
 //            System.out.println("0");
 //        }
 
