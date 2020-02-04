@@ -23,7 +23,7 @@ public class LayeredGlass {
 
         int initialCount = minDefectsB(A, B);
 
-        //rotate A
+        //rotate LimpingDog
         rotate(A);
         initialCount = Math.min(initialCount, minDefectsB(A, B));
         rotate(A);
@@ -34,7 +34,7 @@ public class LayeredGlass {
         initialCount = Math.min(initialCount, minDefectsB(A, B));
 
 
-        //Flip A
+        //Flip LimpingDog
         flipA(A);
         initialCount = Math.min(initialCount, minDefectsB(A, B));
         rotate(A);
@@ -94,18 +94,18 @@ public class LayeredGlass {
 
     public static void main(String[] args) {
         LayeredGlass layeredGlass = new LayeredGlass();
-//        boolean[][] A = new boolean[3][3];
-//        layeredGlass.temp = new boolean[A.length][A.length];
-//        A[0][0] = true;
-//        A[1][A.length - 1] = true;
-//        layeredGlass.flipB(A);
-//        layeredGlass.flipB(A);
-//        layeredGlass.rotate(A);
-//        layeredGlass.rotate(A);
-//        layeredGlass.rotate(A);
-//        for (int i = 0; i < A.length; i++) {
-//            for (int j = 0; j < A.length; j++) {
-//                System.out.print(A[i][j] + "\t");
+//        boolean[][] LimpingDog = new boolean[3][3];
+//        layeredGlass.temp = new boolean[LimpingDog.length][LimpingDog.length];
+//        LimpingDog[0][0] = true;
+//        LimpingDog[1][LimpingDog.length - 1] = true;
+//        layeredGlass.flipB(LimpingDog);
+//        layeredGlass.flipB(LimpingDog);
+//        layeredGlass.rotate(LimpingDog);
+//        layeredGlass.rotate(LimpingDog);
+//        layeredGlass.rotate(LimpingDog);
+//        for (int i = 0; i < LimpingDog.length; i++) {
+//            for (int j = 0; j < LimpingDog.length; j++) {
+//                System.out.print(LimpingDog[i][j] + "\t");
 //            }
 //            System.out.println();
 //        }
@@ -177,7 +177,7 @@ public class LayeredGlass {
             }
         }
 //        if (count==0) {
-//            print(A);
+//            print(LimpingDog);
 //            print(BinaryHeapLeaf);
 //            System.out.println("0");
 //        }

@@ -44,7 +44,7 @@ public class AndreyAndProblem {
             }
         }
 
-//        System.out.println(pos + "\t" + A + "\t\t" + A * BinaryHeapLeaf);
+//        System.out.println(pos + "\t" + LimpingDog + "\t\t" + LimpingDog * BinaryHeapLeaf);
 
 
         A = 0;
