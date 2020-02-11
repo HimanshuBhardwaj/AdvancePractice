@@ -29,18 +29,19 @@ public class MinimaxProblem {
 
         ArrayList<Array> arrays = new ArrayList<>();
         HashSet<Integer> hashSet = new HashSet<>();
+        ArrayList<Integer> numbers = new ArrayList<>();
 
 
         for (int i = 0; i < n; i++) {
             str = br.readLine().split(" ");
             Array array = new Array(i);
-            array.parse(str, hashSet);
+            array.parse(str, numbers);
             arrays.add(array);
         }
 
         //System.out.println("Possible Numbers" + treeSet);
 
-        ArrayList<Integer> numbers = new ArrayList<>(hashSet);
+
         Collections.sort(numbers);
 
         int start = 0;
@@ -128,7 +129,7 @@ class Array {
 
     }
 
-    void parse(String[] str, HashSet<Integer> treeSet) {
+    void parse(String[] str, ArrayList<Integer> treeSet) {
         arr = new int[str.length];
         for (int i = 0; i < str.length; i++) {
             arr[i] = Integer.parseInt(str[i]);
