@@ -55,67 +55,44 @@ class Operations {
 
         int tA, tB, tC;
 
-        for (int i = 1; i <= 10001; i++) {
-            for (int j = 1; j <= 10001; j++) {
+        for (int i = 1; i <= 20001; i++) {
+            for (int jM = 1; jM * i <= 20001; jM++) {
 
-            }
-
-            /*if (Math.abs(i - a) > minMoves) {
-                if (i > minMoves) {
-                    break;
-                } else {
-                    continue;
+                if (Math.abs((jM * i) - b) > minMoves) {
+                    if ((jM * i) > b) {
+                        break;
+                    }
                 }
-            }*/
-
-            /*tA = i;
 
 
-            tB = more(tA, b);
+                for (int kM = 1; kM * jM * i <= 20001; kM++) {
+                    tA = i;
+                    tB = jM * i;
+                    tC = tB * kM;
 
-            tC = more(tB, c);
-            long cst = cost(tA, tB, tC);
 
-            if (cst < minMoves) {
-                minMoves = cst;
-                minNum[0] = tA;
-                minNum[1] = tB;
-                minNum[2] = tC;
+                    long cs = cost(tA, tB, tC);
+                    if (cs < minMoves) {
+                        minMoves = cs;
+                        minNum[0] = tA;
+                        minNum[1] = tB;
+                        minNum[2] = tC;
+                    }
+
+                    if (Math.abs(tC - c) > minMoves) {
+                        if (tC > c) {
+                            break;
+                        }
+                    }
+                }
+
+
             }
-
-            tC = less(tB, c);
-
-            cst = cost(tA, tB, tC);
-
-            if (cst < minMoves) {
-                minMoves = cst;
-                minNum[0] = tA;
-                minNum[1] = tB;
-                minNum[2] = tC;
+            if (Math.abs(i - a) > minMoves) {
+                if (i > a) {
+                    break;
+                }
             }
-
-            tB = less(tA, b);
-
-            tC = more(tB, c);
-            cst = cost(tA, tB, tC);
-
-            if (cst < minMoves) {
-                minMoves = cst;
-                minNum[0] = tA;
-                minNum[1] = tB;
-                minNum[2] = tC;
-            }
-
-            tC = less(tB, c);
-
-            cst = cost(tA, tB, tC);
-
-            if (cst < minMoves) {
-                minMoves = cst;
-                minNum[0] = tA;
-                minNum[1] = tB;
-                minNum[2] = tC;
-            }*/
         }
 
     }
