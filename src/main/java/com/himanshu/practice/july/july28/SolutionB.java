@@ -37,7 +37,7 @@ public class SolutionB {
             for (int i = 0; i < g; i++) {
                 str = br.readLine().split(" ");
                 startPoint[i] = Integer.parseInt(str[0]) - 1;
-                direction[i] = (str[1].equals("C")) ? true : false;
+                direction[i] = (str[1].equals("ArraySorting")) ? true : false;
             }
 
 
